@@ -41,6 +41,7 @@ let completedPairs = 0;
 let totalPairs = 0;
 
 let quizQueue = [];
+let quizTotal = 0;
 let currentQuiz = null;
 
 let spellingQueue = [];
@@ -614,13 +615,15 @@ function startRound2() {
 
   const active = getActiveFields();
   quizQueue = shuffle(
-    gameWords.map((w) => ({
-      word: w,
-      field: active[Math.floor(Math.random() * active.length)],
-    }))
+    gameWords.flatMap((w) =>
+      active
+        .filter((field) => (w[field] || '').trim())
+        .map((field) => ({ word: w, field }))
+    )
   );
+  quizTotal = quizQueue.length;
 
-  updateStats(0, quizQueue.length);
+  updateStats(0, quizTotal);
   startTimer();
   showNextQuiz();
 }
@@ -658,7 +661,7 @@ function showNextQuiz() {
     btn.addEventListener('click', () => onQuizChoice(btn));
   });
 
-  updateStats(gameWords.length - quizQueue.length - 1, gameWords.length);
+  updateStats(quizTotal - quizQueue.length - 1, quizTotal);
 }
 
 function onQuizChoice(btn) {
