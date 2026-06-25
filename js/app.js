@@ -568,11 +568,11 @@ function onMatchCardClick(el) {
   selectedCard = null;
   first.el.classList.remove('selected');
 
-  const isMatch =
-    first.card.pairKey === card.pairKey &&
-    first.card.type !== card.type &&
-    ((first.card.type === 'word' && card.type !== 'word') ||
-     (card.type === 'word' && first.card.type !== 'word'));
+  const isWordMeaningPair =
+    (first.card.type === 'word' && card.type !== 'word') ||
+    (card.type === 'word' && first.card.type !== 'word');
+
+  const isMatch = isWordMeaningPair && first.card.wordId === card.wordId;
 
   if (isMatch) {
     first.el.classList.add('matched');
@@ -591,7 +591,9 @@ function onMatchCardClick(el) {
       }
     }
   } else {
-    recordWrong(first.card.wordId);
+    if (first.card.wordId !== card.wordId) {
+      recordWrong(first.card.wordId);
+    }
     showToast('틀렸어요. 다시 시도해보세요.', 'error');
   }
 }
